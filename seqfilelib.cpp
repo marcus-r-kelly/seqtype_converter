@@ -444,7 +444,286 @@ aln & readPHYML(ifstream & infile)
 
 }
 
-aln& readGENBANK(ifstream & infile) ; 
+seq& readGENBANK(ifstream & infile) ; 
 {
- //RESUME
+    char    line[MAX_LINE_SIZE] ;
+    char    word[MAX_LINE_SIZE] ; 
+    seq*    currentSeq=new seq ; 
+
+    infile.getline(line,MAX_LINE_SIZE) ;
+    word=strtok(line," \t") ; 
+    word=strtok(NULL," \t") ; 
+
+    currentSeq.setName(word) ; // the accession number becomes the name of the sequence . 
+    cerr << "Assigned sequence name " << currentSeq.getName() << endl ; 
+
+    do
+    {
+        infile.getline(line,MAX_LINE_SIZE) ;
+    } while ( strncmp(line,"ORIGIN",6) != 0 )
+
+    do
+    {
+        word=strtok(line," \t") ; 
+        currentSeq.append(word) ; 
+
+    } while (strncmp(line,"//",2) != 0)
+
+    return currentSeq ; 
+
+}
+
+seq & readFASTA(ifstream & infile ) 
+{
+
+    char line[MAX_LINE_SIZE] ;
+    seq* currentSeq=new seq ; 
+    string currSeqName ; 
+
+    while ( infile.good() )
+    {
+        infile.getline(line,MAX_LINE_SIZE) ; 
+
+        if ( line[0] == '>' )
+        {
+        }
+        else
+        {
+            currentSeq->append(line) ; 
+        }
+    }
+
+    cerr << "Contained " << newAln->taxa() << " taxa." << endl ;  
+    cerr << "Sequence lengths:" << endl ; 
+    for ( int i=0 ; i < newAln->taxa() ; i++ )
+    {
+        cerr << (newAln->lengths())[i] << " "  ;
+        if ( i % 5 == 0 )
+            cerr << endl ; 
+    }
+
+    return *newAln ; 
+
+}
+
+seq & readPHYLIP(ifstream & infile)
+{
+
+    aln* newAln = new aln ; 
+    char    line[MAX_LINE_SIZE] ;
+    char    word[MAX_LINE_SIZE] ; 
+    seq*    currentSeq=NULL ; 
+    string  currSeqName ; 
+
+    int phylip_taxa,phylip_length=1 ; 
+    unsigned int blockLength=0;
+    int linesReadThisBlock=0 ;
+    int blocksRead=0 ;
+    int totalRead=0 ; 
+    int lineno=1 ; 
+    bool firstBlock=true ; 
+
+    infile.getline(line,MAX_LINE_SIZE) ;
+
+    word=strtok(line," \t") ; 
+    phylip_taxa=atoi(word) ;
+    word=strtok(NULL," \t") ; 
+    phylip_length=atoi(word) ; 
+
+    // this loop begins on the second line of the file
+
+    while ( infile.good() && totalRead < phylip_taxa*phylip_length ) 
+    {
+        infile.getline(line,MAX_LINE_SIZE) ; 
+
+        if (strlen(line) < 10 ) // to counter for blank lines
+            continue ; 
+
+        if ( linesReadThisBlock == phylip_taxa - 1) 
+        {
+            firstBlock=false ;
+            linesReadThisBlock=0 ; 
+            blocksRead++ ; 
+        }
+
+
+        if ( firstBlock )
+        {
+            // copy over name
+            strncpy(word,line,10) ; 
+            word[10]='\0' ;
+            currentSeq=new seq ;
+            currentSeq->setName(word) ; // on the first block, set the sequence name
+
+            cerr << "Initialized sequence " << linesReadThisBlock << " with name " << word << "." << endl ; 
+
+            strncpy(word,line + 10,MAX_LINE_SIZE) ;
+            /*if ( blockLength == 0 ) 
+                blockLength=strlen(word) ;  // initialize block length if it hasn't been set already
+            else if (blockLength != strlen(word) ) ; // something really needed to go wrong to set this off
+            {
+                cerr << "Inconsistent block lengths at line " << lineno << ":" << endl << line << endl ; 
+                cerr << "Previous block length was " << blockLength << ", current is " << strlen(word) << endl ;  
+                exit(1) ; 
+            }*/
+
+            currentSeq->setContents(word) ;
+            // we dont' need to worry about removing arbitrary spaces because
+            // the seq data type now checks for them each time its contents are updated.
+
+            // at this point, currentSeq has been created and contains the first block's worth
+            // of sequence data. it has NOT been assigned to an alignment.
+
+            newAln->add(currentSeq) ; 
+
+            cerr << "Appended " << strlen(word) << " characters (including spaces) to sequence " <<
+                currentSeq->getName() << "." << endl ; 
+
+            linesReadThisBlock++ ; 
+            totalRead += strlen(word) ;
+
+            cerr << "Total read: " << newAln.chars() << endl ; 
+
+        }
+        else
+        {
+
+            currentSeq=newAln[linesReadThisBlock] ;
+
+            cerr << "Appended " << strlen(word) << " characters (including spaces) to sequence " <<
+                currentSeq->getName() << "." << endl ; 
+
+            strncpy(word,line+10,MAX_LINE_SIZE) ;
+            currentSeq.append(word) ;
+
+            linesReadThisBlock++ ; 
+            totalRead += strlen(word) ;
+
+            cerr << "Total read: " << newAln.chars() << endl ; 
+        }
+        lineno++ ; 
+    }
+
+    if ( newAln.chars() != phylip_taxa*phylip_length )
+    {
+        cerr << "ERROR: Read " << newAln.chars() << " characters rather than expected "
+             << phylip_taxa*phylip_length << " characters." << endl ; 
+
+        exit(1) ; 
+    }
+
+
+    return newAln ;
+
+}
+
+seq & readPHYML(ifstream & infile)
+{
+
+    aln* newAln = new aln ; 
+    char    line[MAX_LINE_SIZE] ;
+    char    word[MAX_LINE_SIZE] ; 
+    seq*    currentSeq=NULL ; 
+    string  currSeqName ; 
+
+    int phyml_taxa,phyml_length=1 ; 
+    unsigned int blockLength=0;
+    int linesReadThisBlock=0 ;
+    int blocksRead=0 ;
+    int totalRead=0 ; 
+    int lineno=1 ; 
+    bool firstBlock=true ; 
+
+    infile.getline(line,MAX_LINE_SIZE) ;
+
+    word=strtok(line," \t") ; 
+    phyml_taxa=atoi(word) ;
+    word=strtok(NULL," \t") ; 
+    phyml_length=atoi(word) ; 
+
+    // this loop begins on the second line of the file
+    // in what I'm calling "phyml" format, the 10-character name space has been relaxed.
+
+    while ( infile.good() && totalRead < phyml_taxa*phyml_length ) 
+    {
+        infile.getline(line,MAX_LINE_SIZE) ; 
+
+        if (strlen(line) < 10 ) // to counter for blank lines
+            continue ; 
+
+        if ( linesReadThisBlock == phyml_taxa - 1) 
+        {
+            firstBlock=false ;
+            linesReadThisBlock=0 ; 
+            blocksRead++ ; 
+        }
+
+
+        if ( firstBlock )
+        {
+            // copy over name
+            word=strtok(line," \t") ; 
+
+            currentSeq=new seq ;
+            currentSeq->setName(word) ; // on the first block, set the sequence name
+
+            cerr << "Initialized sequence " << linesReadThisBlock << " with name " << word << "." << endl ; 
+
+            word=strtok(line," \n\t") ; 
+            /*if ( blockLength == 0 ) 
+                blockLength=strlen(word) ;  // initialize block length if it hasn't been set already
+            else if (blockLength != strlen(word) ) ; // something really needed to go wrong to set this off
+            {
+                cerr << "Inconsistent block lengths at line " << lineno << ":" << endl << line << endl ; 
+                cerr << "Previous block length was " << blockLength << ", current is " << strlen(word) << endl ;  
+                exit(1) ; 
+            }*/
+
+            currentSeq->setContents(word) ;
+            // we dont' need to worry about removing arbitrary spaces because
+            // the seq data type now checks for them each time its contents are updated.
+
+            // at this point, currentSeq has been created and contains the first block's worth
+            // of sequence data. it has NOT been assigned to an alignment.
+
+            newAln->add(currentSeq) ; 
+
+            cerr << "Appended " << strlen(word) << " characters (including spaces) to sequence " <<
+                currentSeq->getName() << "." << endl ; 
+
+            linesReadThisBlock++ ; 
+            totalRead += strlen(word) ;
+
+            cerr << "Total read: " << newAln.chars() << endl ; 
+
+        }
+        else
+        {
+
+            currentSeq=newAln[linesReadThisBlock] ;
+
+            cerr << "Appended " << strlen(word) << " characters (including spaces) to sequence " <<
+                currentSeq->getName() << "." << endl ; 
+
+            word=strtok(line," \n\t") ; 
+            currentSeq.append(word) ;
+
+            linesReadThisBlock++ ; 
+            totalRead += strlen(word) ;
+
+            cerr << "Total read: " << newAln.chars() << endl ; 
+        }
+        lineno++ ; 
+    }
+
+    if ( newAln.chars() != phyml_taxa*phyml_length )
+    {
+        cerr << "ERROR: Read " << newAln.chars() << " characters rather than expected "
+             << phyml_taxa*phyml_length << " characters." << endl ; 
+
+        exit(1) ; 
+    }
+
+    return newAln ;
+
 }
