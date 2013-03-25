@@ -12,12 +12,15 @@ using namespace std;
 
 const int MAX_LINE_SIZE=256 ; 
 const int MAX_WORD_SIZE=16 ; 
+const int FASTA_BLOCK_WIDTH=80 ; 
+const int PHYLIP_BLOCK_WIDTH=80 ; 
 
 enum seqFormat {FASTA, PHYLIP, PHYML, GENBANK, CRAP} ; 
 
 seqFormat getFileFormat(ifstream & infile ) ; 
 string    printFileFormat(seqFormat format) ; 
 seqFormat readFileFormat(string format) ; 
+seqFormat readFileFormat(char* format) ; 
 
 
 aln&    readFASTA(ifstream & infile ) ;
@@ -26,12 +29,12 @@ aln&    readPHYML(ifstream & infile) ;
 
 seq&    readGENBANK(ifstream & infile) ; 
 seq&    readFASTA(ifstream & infile ) ;
-seq&    readPHYLIP(ifstream & infile ) ; 
-seq&    readPHYML(ifstream & infile) ; 
 
-aln&    writeFASTA(ifstream & infile ) ;
-aln&    writePHYLIP(ifstream & infile ) ; 
-aln&    writePHYML(ifstream & infile) ; 
+void   writeFASTA(ofstream & outfile, aln & thealn ) ;
+/*
+void   writePHYLIP(ifstream & outfile, aln & thealn ) ; 
+void   writePHYML(ifstream & outfile, aln & thealn) ; 
+*/
 
 
 #endif

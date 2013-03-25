@@ -23,6 +23,7 @@ int main (int argc, char **argv)
     char forcedIFF[40] ; 
     //char *inputFile ; 
     seqFormat inputFileFormat ; 
+    seqFormat outputFileFormat ; 
     bool forceIFF=false ; 
 
     ifstream infile ; 
@@ -103,9 +104,7 @@ int main (int argc, char **argv)
         strcpy(filename,"infile.txt") ; // a la phylip
     }
 
-    if (debug ) cerr << "Output format: " << outputFormat << "  Input file: " << filename << endl ; 
 
-    if (debug && forceIFF ) cerr << "Input format forced " << forceIFF << " as " << forcedIFF << endl ; 
 
     infile.open(filename) ; 
     if (debug ) cerr << "File " << filename << " opened for reading." << endl ; 
@@ -115,6 +114,11 @@ int main (int argc, char **argv)
     {
         inputFileFormat=getFileFormat(infile) ; 
         if ( debug ) cerr << "DEBUG: Interpreted format: " << printFileFormat(inputFileFormat) << endl ;
+    }
+    else
+    {
+        inputFileFormat=readFileFormat(forcedIFF)  ; 
+        if (debug ) cerr << "Input format forced " << forceIFF << " as " << forcedIFF << endl ; 
     }
 
     switch (inputFileFormat)
@@ -132,6 +136,29 @@ int main (int argc, char **argv)
             perror("Interpreted some kind of crappy file. Get it together.") ; 
             exit(1);
     }
+
+    if (debug ) cerr << "Output format: " << outputFormat << "  Input file: " << filename << endl ; 
+    outputFileFormat=readFileFormat(outputFormat) ; 
+
+    switch ( outputFileFormat )
+    {
+        case FASTA:
+            theAln=writeFASTA(infile ) ;
+        case PHYLIP:
+            perror("Not yet ready.")
+            exit(0) ; 
+        case PHYML:
+            perror("Not yet ready.")
+            exit(0) ; 
+        case GENBANK:
+            perror("Not yet ready.")
+            exit(0) ; 
+        case CRAP:
+        default:
+            perror("Interpreted some kind of crappy file. Get it together.") ; 
+            exit(1);
+    }
+
         
 
 
