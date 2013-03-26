@@ -236,13 +236,13 @@ aln & readPHYLIP(ifstream & infile)
 {
 
     aln* newAln = new aln ; 
-    char    line[MAX_LINE_SIZE] ;
-    char    word[MAX_LINE_SIZE] ; 
+    char*    line = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ;
+    char*    word = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ; 
     seq*    currentSeq=NULL ; 
     string  currSeqName ; 
 
     int phylip_taxa,phylip_length=1 ; 
-    unsigned int blockLength=0;
+    //unsigned int blockLength=0;
     int linesReadThisBlock=0 ;
     int blocksRead=0 ;
     int totalRead=0 ; 
@@ -308,38 +308,38 @@ aln & readPHYLIP(ifstream & infile)
             linesReadThisBlock++ ; 
             totalRead += strlen(word) ;
 
-            cerr << "Total read: " << newAln.chars() << endl ; 
+            cerr << "Total read: " << newAln->chars() << endl ; 
 
         }
         else
         {
 
-            currentSeq=newAln[linesReadThisBlock] ;
+            currentSeq = (*newAln)[linesReadThisBlock] ;
 
             cerr << "Appended " << strlen(word) << " characters (including spaces) to sequence " <<
                 currentSeq->getName() << "." << endl ; 
 
             strncpy(word,line+10,MAX_LINE_SIZE) ;
-            currentSeq.append(word) ;
+            currentSeq->append(word) ;
 
             linesReadThisBlock++ ; 
             totalRead += strlen(word) ;
 
-            cerr << "Total read: " << newAln.chars() << endl ; 
+            cerr << "Total read: " << newAln->chars() << endl ; 
         }
         lineno++ ; 
     }
 
-    if ( newAln.chars() != phylip_taxa*phylip_length )
+    if ( newAln->chars() != phylip_taxa*phylip_length )
     {
-        cerr << "ERROR: Read " << newAln.chars() << " characters rather than expected "
+        cerr << "ERROR: Read " << newAln->chars() << " characters rather than expected "
              << phylip_taxa*phylip_length << " characters." << endl ; 
 
         exit(1) ; 
     }
 
 
-    return newAln ;
+    return *newAln ;
 
 }
 
@@ -347,13 +347,13 @@ aln & readPHYML(ifstream & infile)
 {
 
     aln* newAln = new aln ; 
-    char    line[MAX_LINE_SIZE] ;
-    char    word[MAX_LINE_SIZE] ; 
+    char*    line = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ;
+    char*    word = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ; 
     seq*    currentSeq=NULL ; 
     string  currSeqName ; 
 
     int phyml_taxa,phyml_length=1 ; 
-    unsigned int blockLength=0;
+    //unsigned int blockLength=0;
     int linesReadThisBlock=0 ;
     int blocksRead=0 ;
     int totalRead=0 ; 
@@ -420,71 +420,74 @@ aln & readPHYML(ifstream & infile)
             linesReadThisBlock++ ; 
             totalRead += strlen(word) ;
 
-            cerr << "Total read: " << newAln.chars() << endl ; 
+            cerr << "Total read: " << newAln->chars() << endl ; 
 
         }
         else
         {
 
-            currentSeq=newAln[linesReadThisBlock] ;
+            currentSeq=(*newAln)[linesReadThisBlock] ;
 
             cerr << "Appended " << strlen(word) << " characters (including spaces) to sequence " <<
                 currentSeq->getName() << "." << endl ; 
 
             word=strtok(line," \n\t") ; 
-            currentSeq.append(word) ;
+            currentSeq->append(word) ;
 
             linesReadThisBlock++ ; 
             totalRead += strlen(word) ;
 
-            cerr << "Total read: " << newAln.chars() << endl ; 
+            cerr << "Total read: " << newAln->chars() << endl ; 
         }
         lineno++ ; 
     }
 
-    if ( newAln.chars() != phyml_taxa*phyml_length )
+    if ( newAln->chars() != phyml_taxa*phyml_length )
     {
-        cerr << "ERROR: Read " << newAln.chars() << " characters rather than expected "
+        cerr << "ERROR: Read " << newAln->chars() << " characters rather than expected "
              << phyml_taxa*phyml_length << " characters." << endl ; 
 
         exit(1) ; 
     }
 
-    return newAln ;
+    return *newAln ;
 
 }
 
-seq& readGENBANK(ifstream & infile) ; 
+aln& readGENBANK(ifstream & infile)  
 {
-    char    line[MAX_LINE_SIZE] ;
-    char    word[MAX_LINE_SIZE] ; 
+    char*    line = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ;
+    char*    word = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ; 
     seq*    currentSeq=new seq ; 
+    aln*    theAln=new aln; 
 
     infile.getline(line,MAX_LINE_SIZE) ;
     word=strtok(line," \t") ; 
     word=strtok(NULL," \t") ; 
 
-    currentSeq.setName(word) ; // the accession number becomes the name of the sequence . 
-    cerr << "Assigned sequence name " << currentSeq.getName() << endl ; 
+    currentSeq->setName(word) ; // the accession number becomes the name of the sequence . 
+    cerr << "Assigned sequence name " << currentSeq->getName() << endl ; 
 
     do
     {
         infile.getline(line,MAX_LINE_SIZE) ;
-    } while ( strncmp(line,"ORIGIN",6) != 0 )
+    } while ( strncmp(line,"ORIGIN",6) != 0 ) ;
 
     do
     {
         word=strtok(line," \t") ; // hopefully iterates past the number markers
-        currentSeq.append(word) ; 
+        currentSeq->append(word) ; 
 
-    } while (strncmp(line,"//",2) != 0)
+    } while (strncmp(line,"//",2) != 0) ; 
     // <-- marks termination of genbank files
+    theAln->add( currentSeq) ; 
 
-    return currentSeq ; 
+    return *theAln ; 
 
 }
 
-seq & readFASTA(ifstream & infile ) 
+/*
+seq & readFASTA_single(ifstream & infile ) 
 {
 
     char line[MAX_LINE_SIZE] ;
@@ -511,6 +514,7 @@ seq & readFASTA(ifstream & infile )
     return *newAln ; // or end of file
 
 }
+*/
 
 void writeFASTA( ofstream & outfile, aln & thealn)
 {
@@ -525,7 +529,7 @@ void writeFASTA( ofstream & outfile, aln & thealn)
         charno=0 ; 
         while ( charno < thealn[seqno]->length() )
         {
-            outfile.put( (thealn[seqno])[charno] ) ;
+            outfile.put( (*(thealn[seqno]))[charno] ) ;
 
             if ( charno % FASTA_BLOCK_WIDTH == 0 )
                 outfile.put('\n') ; 
@@ -535,4 +539,3 @@ void writeFASTA( ofstream & outfile, aln & thealn)
     }
 
 } 
-

@@ -19,7 +19,8 @@ void usage()
 int main (int argc, char **argv)
 {
 
-    char *filename = NULL;
+    char *infilename = NULL;
+    char *outfilename= NULL ; 
     char forcedIFF[40] ; 
     //char *inputFile ; 
     seqFormat inputFileFormat ; 
@@ -44,7 +45,7 @@ int main (int argc, char **argv)
     }
 
 
-    while ( (c = getopt (argc, argv, "Di:f:I:hH") ) != -1)
+    while ( (c = getopt (argc, argv, "Di:o:f:I:hH") ) != -1)
     {
         switch (c)
         {
@@ -63,8 +64,13 @@ int main (int argc, char **argv)
                 break ; 
             case 'i':
                 // determine input file name
-                filename= new char[40] ; 
-                strcpy(filename,optarg) ; 
+                infilename= new char[40] ; 
+                strcpy(infilename,optarg) ; 
+                break ;  
+            case 'o':
+                // determine input file name
+                outfilename= new char[40] ; 
+                strcpy(outfilename,optarg) ; 
                 break ;  
             case 'H':
                 // call for help
@@ -90,24 +96,29 @@ int main (int argc, char **argv)
     }
 
 
-    if ( argc > optind && filename == NULL ) 
+    if ( argc > optind && infilename == NULL ) 
     {
         // if you haven't provided the filename and some string is still out there, assume that
         // the last argument is the input file name
         if ( debug ) cerr << "DEBUG: Looking for implicit input file name. (argc: " << argc << ")" << endl ; 
-        filename= new char[40] ; 
-        strcpy(filename,argv[optind]) ; 
+        infilename= new char[40] ; 
+        strcpy(infilename,argv[optind]) ; 
     }
-    else if ( filename == NULL ) 
+    else if ( infilename == NULL ) 
     {
-        filename= new char[40] ; 
-        strcpy(filename,"infile.txt") ; // a la phylip
+        infilename= new char[40] ; 
+        strcpy(infilename,"infile.txt") ; // a la phylip
+    }
+
+    if ( argc > optind && outfilename == NULL ) 
+    {
+        outfilename= new char[40] ; 
+        strcpy(outfilename,"outfile.txt") ; // a la phylip
     }
 
 
-
-    infile.open(filename) ; 
-    if (debug ) cerr << "File " << filename << " opened for reading." << endl ; 
+    infile.open(infilename) ; 
+    if (debug ) cerr << "File " << infilename << " opened for reading." << endl ; 
     
 
     if ( ! forceIFF)
@@ -137,21 +148,24 @@ int main (int argc, char **argv)
             exit(1);
     }
 
-    if (debug ) cerr << "Output format: " << outputFormat << "  Input file: " << filename << endl ; 
+    if (debug ) cerr << "Output format: " << outputFormat << endl
+    << "  Output file: " << outfilename << "opened for writing." << endl ; 
     outputFileFormat=readFileFormat(outputFormat) ; 
+
+    outfile.open(outfilename) ; 
 
     switch ( outputFileFormat )
     {
         case FASTA:
-            theAln=writeFASTA(infile ) ;
+            writeFASTA(outfile, theAln) ;
         case PHYLIP:
-            perror("Not yet ready.")
+            perror("Not yet ready.") ; 
             exit(0) ; 
         case PHYML:
-            perror("Not yet ready.")
+            perror("Not yet ready.") ; 
             exit(0) ; 
         case GENBANK:
-            perror("Not yet ready.")
+            perror("Not yet ready.") ; 
             exit(0) ; 
         case CRAP:
         default:

@@ -27,8 +27,8 @@ aln&    readFASTA(ifstream & infile ) ;
 aln&    readPHYLIP(ifstream & infile ) ; 
 aln&    readPHYML(ifstream & infile) ; 
 
-seq&    readGENBANK(ifstream & infile) ; 
-seq&    readFASTA(ifstream & infile ) ;
+aln&    readGENBANK(ifstream & infile) ; 
+//seq&    readFASTA_single(ifstream & infile ) ;
 
 void   writeFASTA(ofstream & outfile, aln & thealn ) ;
 /*

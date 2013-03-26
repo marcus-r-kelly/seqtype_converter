@@ -45,9 +45,9 @@ void seq::setContents( string str )
     contents=str ; 
     size=str.length() ; 
 
-    if ( contents.find(' ') != std::string::npos)
+    if ( contents.find(' ') != std::string::npos)// preliminary screen for spaces
     {
-        contents.deSpace() ; 
+        this->deSpace() ; 
     }
 
     seqtype=determineType(str); 
@@ -61,7 +61,7 @@ void seq::setContents(char* str)
 
     if ( contents.find(' ') != std::string::npos)
     {
-        contents.deSpace() ; 
+        this->deSpace() ; 
     }
 
     seqtype=determineType(contents) ;
@@ -122,6 +122,7 @@ SeqType seq::determineType(string query)
 
 bool seq::testType(std::string query,std::string alphabet)
 {
+//RESUME
     unsigned int i ; 
 
     for ( i=0; i < query.size() ; i++ ) 
@@ -181,7 +182,7 @@ SeqType seq::getType()
 void seq::deSpace()
 {
     int i ; 
-    for ( i=0 ; i <= this->contents.length() ; i++ )
+    for ( i=0 ; i <= (int) this->contents.length() ; i++ )
     {
         if ( this->contents[i] == ' ' ) // if you find a space
         {
@@ -379,7 +380,7 @@ int aln::longest()
     int i ; 
     int soFar=0 ; 
 
-    for ( i =0 ; i < this->taxa ; i++ )
+    for ( i =0 ; i < this->taxa() ; i++ )
     {
         if ( cols[i] > soFar )
             soFar=cols[i] ;
@@ -394,7 +395,7 @@ int aln::shortest()
     int i ; 
     int soFar=-1 ; 
 
-    for ( i =0 ; i < this->taxa ; i++ )
+    for ( i =0 ; i < this->taxa() ; i++ )
     {
         if ( cols[i] < soFar || soFar==-1 )
             soFar=cols[i] ;
@@ -406,10 +407,10 @@ int aln::shortest()
 
 bool aln::uniform()
 {
-    int i
+    int i ; 
     int soHi,soLo=-1 ; 
 
-    for ( i =0 ; i < this->taxa ; i++ )
+    for ( i =0 ; i < this->taxa() ; i++ )
     {
         if ( cols[i] < soLo || soLo==-1 )
             soLo=cols[i] ;
