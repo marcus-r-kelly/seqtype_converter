@@ -199,6 +199,7 @@ aln & readFASTA(ifstream & infile )
     seq* currentSeq=NULL ; 
     string currSeqName ; 
 
+    infile.seekg(0,infile.beg) ;
     while ( infile.good() )
     {
         infile.getline(line,MAX_LINE_SIZE) ; 
@@ -249,6 +250,7 @@ aln & readPHYLIP(ifstream & infile)
     int lineno=1 ; 
     bool firstBlock=true ; 
 
+    infile.seekg(0,infile.beg) ;
     infile.getline(line,MAX_LINE_SIZE) ;
 
     word=strtok(line," \t") ; 
@@ -360,6 +362,7 @@ aln & readPHYML(ifstream & infile)
     int lineno=1 ; 
     bool firstBlock=true ; 
 
+    infile.seekg(0,infile.beg) ;
     infile.getline(line,MAX_LINE_SIZE) ;
 
     word=strtok(line," \t") ; 
@@ -461,6 +464,7 @@ aln& readGENBANK(ifstream & infile)
     seq*    currentSeq=new seq ; 
     aln*    theAln=new aln; 
 
+    infile.seekg(0,infile.beg) ;
     infile.getline(line,MAX_LINE_SIZE) ;
     word=strtok(line," \t") ; 
     word=strtok(NULL," \t") ; 
