@@ -70,8 +70,34 @@ void seq::setContents(char* str)
 
 void seq::append(string str)
 {
-    if ( contents != "" && seqtype != determineType(str))
+
+    string alphabet ;
+
+    if ( contents.empty() )
     {
+        cerr << "DEBUG : Initializing type ; input appended to empty contents." << endl ; //DEBUG
+        seqtype=determineType(str) ; 
+        cerr << "DEBUG : determined type " << typeStr(seqtype) << endl ; 
+    }
+
+    switch ( this->seqtype ){
+        case DNA:
+            alphabet=DNA_ALPHABET ; 
+        case RNA:
+            alphabet=RNA_ALPHABET ; 
+        case AA:
+            alphabet=AA_ALPHABET ; 
+        default:
+            cerr << "Unrecognized sequence type, function append(string)" << endl ; 
+            exit(EXIT_FAILURE) ; 
+    }
+
+    if ( contents != "" && ! testType(str,alphabet) )
+    {
+
+        cerr << "Input " << str << "produces mismatch between stored type " << this->getTypeStr() <<
+        "and inferred type " << typeStr(determineType(str)) << endl ; 
+
         perror("Appended string does not match type of currently stored string") ;
         exit(1) ; 
     }
@@ -83,9 +109,34 @@ void seq::append(char* str)
 {
     string cppstr ;
     cppstr.append(str) ; 
+    string alphabet ; 
 
-    if ( contents != "" && seqtype != determineType(cppstr))
+    if ( contents.empty() )
     {
+        cerr << "DEBUG : Initializing type ; input appended to empty contents." << endl ; //DEBUG
+        seqtype=determineType(cppstr) ; 
+        cerr << "DEBUG : determined type " << typeStr(seqtype) << endl ; 
+    }
+
+    switch ( this->seqtype ){
+        case DNA:
+            alphabet=DNA_ALPHABET ;
+            break ; 
+        case RNA:
+            alphabet=RNA_ALPHABET ; 
+            break ; 
+        case AA:
+            alphabet=AA_ALPHABET ; 
+            break ; 
+        default:
+            cerr << "Unrecognized sequence type, function append(char*)" << endl ; 
+            exit(EXIT_FAILURE) ; 
+    }
+
+    if ( contents != "" && ! testType(cppstr,alphabet) )
+    {
+        cerr << "Input " << cppstr << " produces mismatch between stored type " << this->getTypeStr() <<
+        " and inferred type " << typeStr(determineType(str)) << endl ; 
         perror("Appended string does not match type of currently stored string") ;
         exit(1) ; 
     }
@@ -122,13 +173,13 @@ SeqType seq::determineType(string query)
 
 bool seq::testType(std::string query,std::string alphabet)
 {
-//RESUME
     unsigned int i ; 
 
     for ( i=0; i < query.size() ; i++ ) 
     {
         if ( alphabet.find(query[i]) == string::npos ) 
         {
+            cerr << "DEBUG: Offending character: " << query[i] << endl ; 
             return false ; 
         }
     }
@@ -420,4 +471,24 @@ bool aln::uniform()
 
     return ( soHi == soLo ) ;
    
+}
+
+
+
+string typeStr( SeqType seq_type)
+{
+    switch(seq_type){
+        case DNA:
+            return "DNA" ;
+            break ; 
+        case RNA:
+            return "RNA" ; 
+            break ; 
+        case AA : 
+            return "AA" ; 
+            break ; 
+        default:
+            cerr << "ERROR: typeStr(): invalid sequence type" << endl ; 
+            exit(1); 
+    }
 }

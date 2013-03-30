@@ -10,6 +10,10 @@ using namespace std;
 
 seqFormat getFileFormat(ifstream & infile )
 {
+
+    cerr << "DEBUG: function  seqFormat getFileFormat(ifstream & infile ) "<< endl ; 
+
+
     int i ; 
     int j ;
     int lastNonAlpha=0 ; 
@@ -19,14 +23,18 @@ seqFormat getFileFormat(ifstream & infile )
     int  phylip_taxa,phylip_length=-1 ; 
 
     infile.getline(line,MAX_LINE_SIZE) ;
+    cerr << "DEBUG: " <<  line << endl ; //DEBUG
 
     // First, we attempt to process any file as though
     // it contains the PHYLIP headers of taxa number and
     // alignment length.
+
     word=strtok(line," \t") ; 
     phylip_taxa=atoi(word) ;
+        cerr <<"DEBUG: " << word << endl ; //DEBUG
     word=strtok(NULL," \t") ; 
     phylip_length=atoi(word) ; 
+        cerr <<"DEBUG: " << word << endl ; //DEBUG
 
     if ( phylip_taxa > 0  && phylip_length > 0 )
     {
@@ -89,6 +97,8 @@ seqFormat getFileFormat(ifstream & infile )
     {
         infile.getline(line,MAX_LINE_SIZE) ; 
 
+        cerr << "DEBUG: " << line << endl ; //DEBUG
+
         // signals a name of a sequence. If it starts a line, this is a giveaway for FASTA
         if ( strncmp(line,">",1) == 0 )
         {
@@ -125,6 +135,9 @@ seqFormat getFileFormat(ifstream & infile )
 
 string    printFileFormat(seqFormat format) 
 {
+
+    cerr << "DEBUG: function string    printFileFormat(seqFormat format) " << endl ;
+
     string out ; 
     switch(format)
     {
@@ -151,6 +164,8 @@ string    printFileFormat(seqFormat format)
 
 seqFormat readFileFormat(string format) 
 {
+
+    cerr << "DEBUG: function seqFormat readFileFormat(string format) " << endl ; 
 
     if ( format == "fasta" )
         return FASTA ; 
@@ -182,6 +197,10 @@ seqFormat readFileFormat(string format)
 
 seqFormat readFileFormat(char* format) 
 {
+
+    cerr << "DEBUG: function seqFormat readFileFormat(char* format) " << endl ; 
+
+
     string formatstring ; 
     formatstring.append(format) ; 
 
@@ -193,6 +212,8 @@ seqFormat readFileFormat(char* format)
 
 aln & readFASTA(ifstream & infile ) 
 {
+
+    cerr << "DEBUG: function aln & readFASTA(ifstream & infile ) " << endl ; 
 
     aln* newAln = new aln ; 
     char line[MAX_LINE_SIZE] ;
@@ -235,6 +256,8 @@ aln & readFASTA(ifstream & infile )
 
 aln & readPHYLIP(ifstream & infile)
 {
+
+    cerr << "DEBUG: function aln & readPHYLIP(ifstream & infile)" << endl ;
 
     aln* newAln = new aln ; 
     char*    line = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ;
@@ -348,6 +371,8 @@ aln & readPHYLIP(ifstream & infile)
 aln & readPHYML(ifstream & infile)
 {
 
+    cerr << "DEBUG: function aln & readPHYML(ifstream & infile) " << endl ; 
+
     aln* newAln = new aln ; 
     char*    line = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ;
     char*    word = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ; 
@@ -459,6 +484,9 @@ aln & readPHYML(ifstream & infile)
 
 aln& readGENBANK(ifstream & infile)  
 {
+
+    cerr << "DEBUG: function aln& readGENBANK(ifstream & infile)  " << endl ; 
+
     char*    line = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ;
     char*    word = (char*) malloc( MAX_LINE_SIZE * sizeof(char) ) ; 
     seq*    currentSeq=new seq ; 
@@ -466,8 +494,13 @@ aln& readGENBANK(ifstream & infile)
 
     infile.seekg(0,infile.beg) ;
     infile.getline(line,MAX_LINE_SIZE) ;
-    word=strtok(line," \t") ; 
+
+    cerr << "DEBUG: " << line << endl ; //DEBUG
+
+    word=strtok(line," \t") ;
+        cerr << "DEBUG: "<< word << endl ; // DEBUG 
     word=strtok(NULL," \t") ; 
+        cerr << "DEBUG: "<< word << endl ; //DEBUG
 
     currentSeq->setName(word) ; // the accession number becomes the name of the sequence . 
     cerr << "Assigned sequence name " << currentSeq->getName() << endl ; 
@@ -477,9 +510,15 @@ aln& readGENBANK(ifstream & infile)
         infile.getline(line,MAX_LINE_SIZE) ;
     } while ( strncmp(line,"ORIGIN",6) != 0 ) ;
 
+
+    cerr << "DEBUG: began reading sequence proper" << endl ; 
+
     do
     {
+        infile.getline(line,MAX_LINE_SIZE) ;
         word=strtok(line," \t") ; // hopefully iterates past the number markers
+        word=strtok(NULL," \t") ; // hopefully iterates past the number markers
+        cerr << "DEBUG: read sequence information " << word << endl ; 
         currentSeq->append(word) ; 
 
     } while (strncmp(line,"//",2) != 0) ; 
@@ -522,7 +561,7 @@ seq & readFASTA_single(ifstream & infile )
 
 void writeFASTA( ofstream & outfile, aln & thealn)
 {
-
+    cerr << "DEBUG: function void writeFASTA( ofstream & outfile, aln & thealn)" << endl ; 
     int seqno=0 ;
     int charno=0 ; 
 

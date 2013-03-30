@@ -14,6 +14,9 @@ const string DNA_ALPHABET="atgcyrswkmbdhvnATGCYRSWKMBDHVN-" ;
 const string RNA_ALPHABET="augcyrswkmbdhvnAUGCYRSWKMBDHVN-" ; 
 const string AA_ALPHABET="ABCDEFGHIKLMNPQRSTVWXYZabcdefghiklmnpqrstvwxyz-" ; 
 
+string typeStr( SeqType seq_type) ; 
+// external function provided by this library
+
 class seq{
 
 public: 
