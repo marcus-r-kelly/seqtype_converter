@@ -513,15 +513,25 @@ aln& readGENBANK(ifstream & infile)
 
     cerr << "DEBUG: began reading sequence proper" << endl ; 
 
-    do
+    while (  infile.good() )  
     {
         infile.getline(line,MAX_LINE_SIZE) ;
+        if ( strncmp(line,"//",2) == 0 )
+        {
+            cerr << "DEBUG: GENBANK terminator reached" << endl ; 
+            break ; 
+        }
+
+
         word=strtok(line," \t") ; // hopefully iterates past the number markers
-        word=strtok(NULL," \t") ; // hopefully iterates past the number markers
+        word=strtok(NULL,"\n") ; // hopefully iterates past the number markers
         cerr << "DEBUG: read sequence information " << word << endl ; 
         currentSeq->append(word) ; 
+        cerr << "DEBUG: successfully appended line." << endl ; 
+    } 
 
-    } while (strncmp(line,"//",2) != 0) ; 
+    cerr << "DEBUG: finished reading GENBANK file." << endl ; 
+
     // <-- marks termination of genbank files
     theAln->add( currentSeq) ; 
 
@@ -565,8 +575,14 @@ void writeFASTA( ofstream & outfile, aln & thealn)
     int seqno=0 ;
     int charno=0 ; 
 
+
+    cerr << "DEBUG: output alignment statistics: " << thealn.taxa() << " TAXA with maximum length " << thealn.longest() << endl ; 
+
     for ( seqno=0 ; seqno < thealn.taxa()  ; seqno++)
     {
+
+        cerr << "DEBUG: printing sequence " << seqno + 1 << " Total characters: " << thealn[seqno]->length() << endl ; 
+
         outfile << ">" << thealn[seqno]->getName() << endl ;
        
         charno=0 ; 
@@ -576,6 +592,8 @@ void writeFASTA( ofstream & outfile, aln & thealn)
 
             if ( charno % FASTA_BLOCK_WIDTH == 0 )
                 outfile.put('\n') ; 
+
+            charno++ ;
 
         }
 

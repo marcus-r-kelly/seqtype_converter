@@ -136,16 +136,20 @@ int main (int argc, char **argv)
     {
         case FASTA:
             theAln=readFASTA(infile ) ;
+            break ; 
         case PHYLIP:
             theAln=readPHYLIP(infile ) ; 
+            break ; 
         case PHYML:
             theAln=readPHYML(infile) ; 
+            break ; 
         case GENBANK:
             theAln=readGENBANK(infile) ; 
+            break ; 
         case CRAP:
         default:
             perror("Interpreted some kind of crappy file. Get it together.") ; 
-            exit(1);
+            exit(EXIT_FAILURE);
     }
 
     if (debug ) cerr << "Output format: " << outputFormat << endl
@@ -158,19 +162,23 @@ int main (int argc, char **argv)
     {
         case FASTA:
             writeFASTA(outfile, theAln) ;
+            break; 
         case PHYLIP:
             perror("Not yet ready.") ; 
-            exit(0) ; 
+            exit(EXIT_FAILURE) ; 
+            break; 
         case PHYML:
             perror("Not yet ready.") ; 
-            exit(0) ; 
+            exit(EXIT_FAILURE) ; 
+            break ; 
         case GENBANK:
             perror("Not yet ready.") ; 
-            exit(0) ; 
+            exit(EXIT_FAILURE) ; 
+            break ; 
         case CRAP:
         default:
             perror("Interpreted some kind of crappy file. Get it together.") ; 
-            exit(1);
+            exit(EXIT_FAILURE);
     }
 
         

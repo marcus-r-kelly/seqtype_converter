@@ -14,8 +14,9 @@ const string DNA_ALPHABET="atgcyrswkmbdhvnATGCYRSWKMBDHVN-" ;
 const string RNA_ALPHABET="augcyrswkmbdhvnAUGCYRSWKMBDHVN-" ; 
 const string AA_ALPHABET="ABCDEFGHIKLMNPQRSTVWXYZabcdefghiklmnpqrstvwxyz-" ; 
 
-string typeStr( SeqType seq_type) ; 
 // external function provided by this library
+string typeStr( SeqType seq_type) ; 
+void deSpace(string & str) ; 
 
 class seq{
 
@@ -63,7 +64,6 @@ private:
 
     SeqType determineType(string query) ; // initializes type from string contents
     bool testType(std::string query,std::string alphabet) ; // sees if types are valid
-    void deSpace() ;
 
 } ; 
 

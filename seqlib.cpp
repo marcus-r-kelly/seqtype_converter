@@ -41,14 +41,13 @@ void seq::setName( string newname)
 
 void seq::setContents( string str )
 {
+    if ( str.find(' ') != std::string::npos)// preliminary screen for spaces
+    {
+        deSpace(str) ; 
+    }
 
     contents=str ; 
     size=str.length() ; 
-
-    if ( contents.find(' ') != std::string::npos)// preliminary screen for spaces
-    {
-        this->deSpace() ; 
-    }
 
     seqtype=determineType(str); 
 }
@@ -57,12 +56,13 @@ void seq::setContents(char* str)
 {
     contents.clear() ; 
     contents.append( str) ; 
-    size=contents.length() ; 
 
-    if ( contents.find(' ') != std::string::npos)
+    if ( this->contents.find(' ') != std::string::npos)// preliminary screen for spaces
     {
-        this->deSpace() ; 
+        deSpace(this->contents) ; 
     }
+
+    size=contents.length() ; 
 
     seqtype=determineType(contents) ;
 }
@@ -71,7 +71,19 @@ void seq::setContents(char* str)
 void seq::append(string str)
 {
 
+    // all kinds of things can go wrong here if str is empty
+    if ( str.empty() )
+    {
+        cerr << "DEBUG: attempt to append empty string." << endl ; 
+        return; 
+    }
+
     string alphabet ;
+
+    if ( str.find(' ') != std::string::npos)// preliminary screen for spaces
+    {
+        deSpace(str) ; 
+    }
 
     if ( contents.empty() )
     {
@@ -110,6 +122,18 @@ void seq::append(char* str)
     string cppstr ;
     cppstr.append(str) ; 
     string alphabet ; 
+
+    if ( cppstr.empty() )
+    {
+        cerr << "DEBUG: attempt to append empty string." << endl ; 
+        return; 
+    }
+
+    if ( cppstr.find(' ') != std::string::npos)// preliminary screen for spaces
+    {
+        deSpace(cppstr) ; 
+    }
+
 
     if ( contents.empty() )
     {
@@ -230,20 +254,6 @@ SeqType seq::getType()
     return seqtype ; 
 }
 
-void seq::deSpace()
-{
-    int i ; 
-    for ( i=0 ; i <= (int) this->contents.length() ; i++ )
-    {
-        if ( this->contents[i] == ' ' ) // if you find a space
-        {
-            this->contents.erase(contents.begin()+i) ; // delete it
-        }
-    }
-
-    size=contents.length() ; 
-
-}
 
 
 /*
@@ -473,7 +483,7 @@ bool aln::uniform()
    
 }
 
-
+// external functions provided by this library
 
 string typeStr( SeqType seq_type)
 {
@@ -491,4 +501,18 @@ string typeStr( SeqType seq_type)
             cerr << "ERROR: typeStr(): invalid sequence type" << endl ; 
             exit(1); 
     }
+}
+
+
+void deSpace(string & str)
+{
+    int i ; 
+    for ( i=0 ; i <= (int) str.length() ; i++ )
+    {
+        if ( str[i] == ' ' ) // if you find a space
+        {
+            str.erase(str.begin()+i) ; // delete it
+        }
+    }
+
 }
