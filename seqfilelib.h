@@ -13,7 +13,7 @@ using namespace std;
 const int MAX_LINE_SIZE=256 ; 
 const int MAX_WORD_SIZE=16 ; 
 const int FASTA_BLOCK_WIDTH=80 ; 
-const int PHYLIP_BLOCK_WIDTH=80 ; 
+const int PHYLIP_BLOCK_WIDTH=60 ; 
 
 enum seqFormat {FASTA, PHYLIP, PHYML, GENBANK, CRAP} ; 
 
@@ -31,10 +31,8 @@ aln&    readGENBANK(ifstream & infile) ;
 //seq&    readFASTA_single(ifstream & infile ) ;
 
 void   writeFASTA(ofstream & outfile, aln & thealn ) ;
-/*
-void   writePHYLIP(ifstream & outfile, aln & thealn ) ; 
+void   writePHYLIP(ofstream & outfile, aln & thealn ) ; 
 void   writePHYML(ifstream & outfile, aln & thealn) ; 
-*/
 
 
 #endif

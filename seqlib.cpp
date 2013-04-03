@@ -115,6 +115,7 @@ void seq::append(string str)
     }
 
     contents.append(str) ; 
+    size=contents.length() ;
 }
 
 void seq::append(char* str)
@@ -166,6 +167,7 @@ void seq::append(char* str)
     }
 
     contents.append(cppstr) ; 
+    size=contents.length() ;
 }
 
 SeqType seq::determineType(string query)

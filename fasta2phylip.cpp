@@ -164,8 +164,7 @@ int main (int argc, char **argv)
             writeFASTA(outfile, theAln) ;
             break; 
         case PHYLIP:
-            perror("Not yet ready.") ; 
-            exit(EXIT_FAILURE) ; 
+            writePHYLIP(outfile, theAln) ;
             break; 
         case PHYML:
             perror("Not yet ready.") ; 

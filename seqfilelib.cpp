@@ -590,7 +590,7 @@ void writeFASTA( ofstream & outfile, aln & thealn)
         {
             outfile.put( (*(thealn[seqno]))[charno] ) ;
 
-            if ( charno % FASTA_BLOCK_WIDTH == 0 )
+            if ( ( charno + 1 ) % FASTA_BLOCK_WIDTH == 0 )
                 outfile.put('\n') ; 
 
             charno++ ;
@@ -600,3 +600,145 @@ void writeFASTA( ofstream & outfile, aln & thealn)
     }
 
 } 
+
+void writePHYLIP(ofstream & outfile, aln & thealn)
+{
+    cerr << "DEBUG: funciton void writePHYLIP(ofstream & outfile, aln & thealn)" << endl ; 
+    int seqno=0 ; 
+    int total_charno=0 ; // total number of characters-- like all of them.
+    int line_charno=0 ; //characters printed IN THIS LINE
+    int block=0 ; // blocks we've iterated through
+    int pad ; 
+
+    cerr << "DEBUG: output alignment statistics: " << thealn.taxa() << " TAXA with maximum length " << thealn.longest() << endl ; 
+
+    outfile << "  " << thealn.taxa() << "  " << thealn.chars() << endl ; // put PHYLIP size data at top
+
+    while ( total_charno < thealn.chars() ) // control for file length
+    {
+
+        for (seqno=0 ; seqno < thealn.taxa()  ; seqno ++ )
+        {
+
+            if ( block==0 ) // only the first block contains name information
+            {
+                if ( ((thealn[seqno])->getName()).length() < 10 )
+                {
+                    outfile << (thealn[seqno])->getName() ; 
+                    for ( pad=((thealn[seqno])->getName()).length() ; pad < 10 ; pad ++ )
+                    {
+                        outfile.put(' ') ; // pad names of fewer than 10 characters
+                    }
+                }
+                else if ( ((thealn[seqno])->getName()).length() > 10 )
+                {
+                    outfile << ((thealn[seqno])->getName()).substr(0,10)  ; // truncate ones of larger than 10 characters
+                }
+                else // put ones of exactly 10 characters
+                {
+                    outfile << (thealn[seqno])->getName() << endl ; 
+                }
+                
+            }
+            else
+            {
+                outfile << "          " ; // 10 spaces
+                line_charno=0 ; 
+            }
+
+            // write the sequence, or spaces if this sequence is over.
+            while ( line_charno < PHYLIP_BLOCK_WIDTH  )
+            {
+                if ( total_charno < (thealn[seqno])->length() )
+                {
+                    outfile.put( (*(thealn[seqno]))[total_charno] ) ; 
+                    line_charno++ ;
+                    total_charno++ ; 
+                }
+                else
+                {
+                    outfile.put(' ') ; 
+                    line_charno++ ;
+                }
+            }
+
+            outfile.put('\n') ;
+        }
+
+        outfile.put('\n') ;
+        block++ ; 
+    }
+
+}
+
+
+
+void writePHYML(ofstream & outfile, aln & thealn)
+{
+    cerr << "DEBUG: funciton void writePHYLIP(ofstream & outfile, aln & thealn)" << endl ; 
+    int seqno=0 ; 
+    int total_charno=0 ; // total number of characters-- like all of them.
+    int line_charno=0 ; //characters printed IN THIS LINE
+    int block=0 ; // blocks we've iterated through
+    int pad ; 
+
+    cerr << "DEBUG: output alignment statistics: " << thealn.taxa() << " TAXA with maximum length " << thealn.longest() << endl ; 
+
+    outfile << "  " << thealn.taxa() << "  " << thealn.chars() << endl ; // put PHYLIP size data at top
+
+    while ( total_charno < thealn.chars() ) // control for file length
+    {
+
+        for (seqno=0 ; seqno < thealn.taxa()  ; seqno ++ )
+        {
+
+            if ( block==0 ) // only the first block contains name information
+            {
+                if ( ((thealn[seqno])->getName()).length() < 10 )
+                {
+                    outfile << (thealn[seqno])->getName() ; 
+                    for ( pad=((thealn[seqno])->getName()).length() ; pad < 10 ; pad ++ )
+                    {
+                        outfile.put(' ') ; // pad names of fewer than 10 characters
+                    }
+                }
+                else if ( ((thealn[seqno])->getName()).length() > 10 )
+                {
+                    outfile << ((thealn[seqno])->getName()).substr(0,10)  ; // truncate ones of larger than 10 characters
+                }
+                else // put ones of exactly 10 characters
+                {
+                    outfile << (thealn[seqno])->getName() << endl ; 
+                }
+                
+            }
+            else
+            {
+                outfile << "          " ; // 10 spaces
+                line_charno=0 ; 
+            }
+
+            // write the sequence, or spaces if this sequence is over.
+            while ( line_charno < PHYLIP_BLOCK_WIDTH  )
+            {
+                if ( total_charno < (thealn[seqno])->length() )
+                {
+                    outfile.put( (*(thealn[seqno]))[total_charno] ) ; 
+                    line_charno++ ;
+                    total_charno++ ; 
+                }
+                else
+                {
+                    outfile.put(' ') ; 
+                    line_charno++ ;
+                }
+            }
+
+            outfile.put('\n') ;
+        }
+
+        outfile.put('\n') ;
+        block++ ; 
+    }
+
+}
