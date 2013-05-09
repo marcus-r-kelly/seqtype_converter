@@ -599,6 +599,8 @@ void writeFASTA( ofstream & outfile, aln & thealn)
 
     }
 
+    outfile << endl ; 
+
 } 
 
 void writePHYLIP(ofstream & outfile, aln & thealn)
@@ -663,7 +665,7 @@ void writePHYLIP(ofstream & outfile, aln & thealn)
             }
 
             outfile.put('\n') ;
-        }
+       }
 
         outfile.put('\n') ;
         block++ ; 
@@ -675,6 +677,7 @@ void writePHYLIP(ofstream & outfile, aln & thealn)
 
 void writePHYML(ofstream & outfile, aln & thealn)
 {
+    // RESUME
     cerr << "DEBUG: funciton void writePHYLIP(ofstream & outfile, aln & thealn)" << endl ; 
     int seqno=0 ; 
     int total_charno=0 ; // total number of characters-- like all of them.
