@@ -217,11 +217,21 @@ string seq::getName()
 {
     return name ; 
 }
+string seq::getName(int start,int finish)
+{
+    return name.substr(start,finish-start) ; 
+}
 
 string seq::getSeq()
 {
     return contents ; 
 }
+
+string seq::getSeq(int start, int finish)
+{
+    return contents.substr(start,finish-start) ; 
+}
+
 
 int seq::length() 
 {
@@ -484,6 +494,49 @@ bool aln::uniform()
     return ( soHi == soLo ) ;
    
 }
+
+bool uniqueNames()
+{
+    int i,j; 
+
+    for ( i=0 ; i < this->taxa() ; i++ )
+    {
+        for (j=i + 1 ; j < this->taxa()  ; i++ )
+        {
+            if ( (*this)[i]->getName() == (*this)[j]->getName() )
+            {
+                cerr << "WARNING: Non-unique names: " << (*this)[i]->getName() << " and " <<
+                     (*this)[j]->getName() << "!" << endl ; 
+                return false ; 
+            }
+        }
+    }
+
+    return true ;
+}
+
+bool uniqueNames(int nochars)
+{
+    int i,j; 
+
+    for ( i=0 ; i < this->taxa() ; i++ )
+    {
+        for (j=i + 1 ; j < this->taxa()  ; i++ )
+        {
+            if ( (*this)[i]->getName(0,nochars) == (*this)[j]->getName(0,nochars) )
+            {
+                cerr << "WARNING: Non-unique names: " << (*this)[i]->getName() << " and " <<
+                     (*this)[j]->getName() << "to a limit of " << nochars << "characters." << endl ; 
+                return false ; 
+            }
+        }
+    }
+
+    return true ;
+}
+
+
+
 
 // external functions provided by this library
 

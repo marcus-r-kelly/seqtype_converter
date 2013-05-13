@@ -41,10 +41,13 @@ public:
     void append(char* str) ;  // ^^
 
     string getName() ;
+    string getName(int start, int finish) ;
     // get name of single sequence
 
     string getSeq() ; 
     // get sequence
+    string getSeq(int start, int finish) ;
+    // get sequence data from indices start to finish, inclusive
 
     int length() ; // returns sequence length (var size)
 
@@ -100,6 +103,9 @@ class aln{
         int longest() ; 
         int shortest() ; 
         bool uniform() ; 
+
+        bool uniqueNames() ; 
+        bool uniqueNames(int nochars) ; 
 
     private:
 

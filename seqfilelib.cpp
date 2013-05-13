@@ -677,13 +677,13 @@ void writePHYLIP(ofstream & outfile, aln & thealn)
 
 void writePHYML(ofstream & outfile, aln & thealn)
 {
-    // RESUME
     cerr << "DEBUG: funciton void writePHYLIP(ofstream & outfile, aln & thealn)" << endl ; 
     int seqno=0 ; 
     int total_charno=0 ; // total number of characters-- like all of them.
     int line_charno=0 ; //characters printed IN THIS LINE
     int block=0 ; // blocks we've iterated through
     int pad ; 
+    int pad_length=30 ; 
 
     cerr << "DEBUG: output alignment statistics: " << thealn.taxa() << " TAXA with maximum length " << thealn.longest() << endl ; 
 
@@ -697,19 +697,20 @@ void writePHYML(ofstream & outfile, aln & thealn)
 
             if ( block==0 ) // only the first block contains name information
             {
-                if ( ((thealn[seqno])->getName()).length() < 10 )
+                if ( ((thealn[seqno])->getName()).length() < 30 )
                 {
                     outfile << (thealn[seqno])->getName() ; 
-                    for ( pad=((thealn[seqno])->getName()).length() ; pad < 10 ; pad ++ )
+                    for ( pad=((thealn[seqno])->getName()).length() ; pad < 30 ; pad ++ )
                     {
-                        outfile.put(' ') ; // pad names of fewer than 10 characters
+                        outfile.put(' ') ; // pad names of fewer than pad_length characters
                     }
                 }
-                else if ( ((thealn[seqno])->getName()).length() > 10 )
+                else if ( ((thealn[seqno])->getName()).length() > (unsigned int ) pad_length )
                 {
-                    outfile << ((thealn[seqno])->getName()).substr(0,10)  ; // truncate ones of larger than 10 characters
+                    outfile << ((thealn[seqno])->getName()).substr(0,pad_length)  ; 
+                    // truncate ones of larger than pad_length characters
                 }
-                else // put ones of exactly 10 characters
+                else // put ones of exactly pad_length characters
                 {
                     outfile << (thealn[seqno])->getName() << endl ; 
                 }

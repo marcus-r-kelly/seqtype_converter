@@ -152,6 +152,13 @@ int main (int argc, char **argv)
             exit(EXIT_FAILURE);
     }
 
+    if ( ~theAln.uniqueNames() )
+    {
+            perror("You have identical sequence names. There will be trouble down the line. Exiting.") ; 
+            exit(EXIT_FAILURE) ; 
+    } 
+
+
     if (debug ) cerr << "Output format: " << outputFormat << endl
     << "  Output file: " << outfilename << "opened for writing." << endl ; 
     outputFileFormat=readFileFormat(outputFormat) ; 
@@ -167,11 +174,10 @@ int main (int argc, char **argv)
             writePHYLIP(outfile, theAln) ;
             break; 
         case PHYML:
-            perror("Not yet ready.") ; 
-            exit(EXIT_FAILURE) ; 
+            writePHYML(outfile, theAln) ; 
             break ; 
         case GENBANK:
-            perror("Not yet ready.") ; 
+            perror("This program will not write to GENBANK format") ; 
             exit(EXIT_FAILURE) ; 
             break ; 
         case CRAP:
@@ -180,6 +186,7 @@ int main (int argc, char **argv)
             exit(EXIT_FAILURE);
     }
 
+    
         
 
 

@@ -32,7 +32,7 @@ aln&    readGENBANK(ifstream & infile) ;
 
 void   writeFASTA(ofstream & outfile, aln & thealn ) ;
 void   writePHYLIP(ofstream & outfile, aln & thealn ) ; 
-void   writePHYML(ifstream & outfile, aln & thealn) ; 
+void   writePHYML(ofstream & outfile, aln & thealn) ; 
 
 
 #endif
